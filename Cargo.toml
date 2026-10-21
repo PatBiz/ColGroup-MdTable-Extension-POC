@@ -1,0 +1,7 @@
+[package]
+name = "colgroup_poc"
+version = "0.1.0"
+authors = ["PatBiz"]
+
+[dependencies]
+clap = { version = "4", features = [] }
