@@ -1,3 +1,4 @@
+// Standard library
 use std::ffi::OsString;
 use std::fs::{
     File,
@@ -6,19 +7,14 @@ use std::fs::{
 use std::io::Write;
 use std::process::ExitCode;
 
-extern crate clap;
+// Third-party libraries
 use clap::{
     Arg,
     Command,
 };
 
-mod transpiler;
-use self::transpiler::{
-    transpile,
-};
-use self::transpiler::ir::{
-    Transpile,
-};
+// Local libraries
+use colgroup_poc::transpile;
 
 
 #[derive(Debug)]
@@ -83,7 +79,6 @@ fn main() -> ExitCode {
     let dest = transpile_cmd.dest.unwrap_or(format!("output.{}", transpile_cmd.target));
     let target = transpile_cmd.target;
 
-
     let input = match read_to_string(&src) {
         Ok(val) => val,
         Err(err) => {
@@ -94,13 +89,10 @@ fn main() -> ExitCode {
         },
     };
 
-    let output= match target.as_str() {
-        "html" => transpile(&input).to_html(),
-        "pdf" => transpile(&input).to_pdf(),
-        _ => {
-            eprintln!(
-                "Unsupported transpilation target: {target}"
-            );
+    let output= match transpile(&input, target.as_str()) {
+        Ok(val) => val,
+        Err(err) => {
+            eprintln!("Couldn't transpile '{src}': {err}");
             return ExitCode::FAILURE;
         },
     };
